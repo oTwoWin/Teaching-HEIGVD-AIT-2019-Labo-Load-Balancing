@@ -208,7 +208,6 @@ The JMeter test plan is set up in the following way:
 * The Summary Report shows the counters ("S1 reached" / "S2 reached")
   and the total counts.
 
-
 **Deliverables:**
 
 1. Explain how the load balancer behaves when you open and refresh the
