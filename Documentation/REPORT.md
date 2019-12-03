@@ -276,9 +276,9 @@ Ci-dessous, une partie du fichier haproxy.cfg contenant les modifiations
 
 #### 1.2 Stratégie *leastconn*
 
-La stratégie **leastconn** a plutôt une idéologie inverse de **first**. La requête va être redirigée sur le serveur ayant le moins de connexions en cours. Si plusieurs serveurs ont le même nombre de connexions en cours, l'algorithme Round-Robin est utilisé. Il est idéal pour de longues connexions.  
+La stratégie **leastconn** a plutôt une idéologie inverse de **first**. La requête va être redirigée sur le serveur ayant le moins de charge de connexion en cours. La stratégie est focus sur la concurrence de charge des serveurs. Si plusieurs serveurs ont le même nombre de connexions en cours, l'algorithme Round-Robin est utilisé. Il est idéal pour de longues connexions.  
 
-Afin de configurer *HAProxy* avec la stratégie *fleastconn*, nous avons dû la spécifier dans le fichier de configuration *haproxy.cfg* 
+Afin de configurer *HAProxy* avec la stratégie *leastconn*, nous avons dû la spécifier dans le fichier de configuration *haproxy.cfg* 
 
 Ci-dessous, une partie du fichier haproxy.cfg contenant les modifications:
 
@@ -316,6 +316,8 @@ Nous pouvons remarquer qu'avec la stratégie **first** et les cookies activés ,
 
 **leastconn**:
 
+On s'aperçoit que s2 répond plus souvent que s1. On peut donc en déduire que s1 a été plus souvent surchargé que s2.
+
 ![image-20191130141010888](/home/ljebool/.config/Typora/typora-user-images/image-20191130141010888.png)
 
 ### 2. 2ème test 
@@ -343,6 +345,8 @@ Nous pouvons remarquer qu'avec la stratégie **first** et les cookies activés ,
 ![image-20191130140936149](/home/ljebool/.config/Typora/typora-user-images/image-20191130140936149.png)
 
 ​		**leastconn**:
+
+ On peut s'apercevoir que dans ce cas s1 a été sollicité plus de fois que s2. Comme décrit dans la documentation, cette stratégie n'est pas adapté pour le protocol HTTP car elle est faite de connexion courte. C'est pour cela qu'on peut apercevoir une différence entre deux tests de charge.
 
 ![image-20191130141053524](/home/ljebool/.config/Typora/typora-user-images/image-20191130141053524.png)
 
@@ -376,6 +380,8 @@ Nous pouvons remarquer qu'avec la stratégie **first** et les cookies activés ,
 
 **leastconn**:
 
+Cette stratégie de test est beaucoup plus adaptée à cette stratégie de load balancing. En effet, on peut s'apercevoir qu'on reçoit plus de connexion sur s2 car les connexions sont plus rapide et donc le serveur est plus apte à répondre plus rapidement.
+
 ![image-20191130141938887](/home/ljebool/.config/Typora/typora-user-images/image-20191130141938887.png)
 
 
@@ -407,6 +413,8 @@ Nous pouvons remarquer qu'avec la stratégie **first** et les cookies activés ,
 ![image-20191130141910656](/home/ljebool/.config/Typora/typora-user-images/image-20191130141910656.png)
 
 **leastconn**:
+
+La différence est que les sessions sont reset à chaque connexion. On remarque que plus de connexion vont aller sur s2 que dans le 3ème test. En effet, on suppose que les premières connexions faites sur s1 vont être redirigés sur s2. Le ratio de temps entre les deux serveurs est de 1/4, on remarque également que le ration est presque respecté sur les tests JMeter.
 
 ![image-20191130141949337](/home/ljebool/.config/Typora/typora-user-images/image-20191130141949337.png)
 
