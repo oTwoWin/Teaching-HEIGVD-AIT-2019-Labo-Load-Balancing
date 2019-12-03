@@ -352,7 +352,7 @@ Dans ce test, la seule différence est que les cookies sont désactivés. Nous p
 
 **leastconn**:
 
- On peut s'apercevoir que dans ce cas s1 a été sollicité plus de fois que s2. Comme décrit dans la documentation, cette stratégie n'est pas adapté pour le protocol HTTP car elle est faite de connexion courte. C'est pour cela qu'on peut apercevoir une différence entre deux tests de charge.
+On peut s'apercevoir que dans ce cas s1 a été sollicité plus de fois que s2. Comme décrit dans la documentation, cette stratégie n'est pas adapté pour le protocol HTTP car elle est faite de connexion courte. C'est pour cela qu'on peut apercevoir une différence entre deux tests de charge.
 
 ![image-20191130141053524](/home/ljebool/.config/Typora/typora-user-images/image-20191130141053524.png)
 
