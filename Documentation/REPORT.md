@@ -1,3 +1,7 @@
+# Laboratoire 3 - Load Balancing
+
+## Auteurs : Daniel Oliveira Paiva et Edin Mujkanovic
+
 # Task 1
 
 *1 . Explain how the load balancer behaves when you open and refresh the URL <http://192.168.42.42> in your browser. Add screenshots to complement your explanations. We expect that you take a deeper a look at session management.*
@@ -310,7 +314,7 @@ Ci-dessous, une partie du fichier haproxy.cfg contenant les modifications:
 
 Nous pouvons remarquer qu'avec la stratégie **first** et les cookies activés , la distribution se fait uniformement sur les deux serveurs. La distrbutions se fera ainsi : 
 
-- Le serveur `s1` se verra attribués jusqu'à ce qu'il ait 5 connexions actives. Lorsque la 6ème requête arrive, le proxy redirigera la 
+- Le serveur `s1` se verra attribués jusqu'à ce qu'il ait 5 connexions actives. Lorsque la 6ème requête arrive, le proxy redirigera cette dernière sur le serveur `s2`.
 
 ##### 		![image-20191130141200848](/home/ljebool/.config/Typora/typora-user-images/image-20191130141200848.png)
 
@@ -342,9 +346,11 @@ On s'aperçoit que s2 répond plus souvent que s1. On peut donc en déduire que 
 
 ##### 		**first**:
 
+Dans ce test, la seule différence est que les cookies sont désactivés. Nous pouvons remarqués que plus de la moitiés des requêtes ont été redirigées sur le serveur `s1`. En d'autres termes, nous pouvons dire que 2285 requêtes sont arrivées au proxy lorsque le serveur `s1` avait déjà 5 connexions actives.
+
 ![image-20191130140936149](/home/ljebool/.config/Typora/typora-user-images/image-20191130140936149.png)
 
-​		**leastconn**:
+**leastconn**:
 
  On peut s'apercevoir que dans ce cas s1 a été sollicité plus de fois que s2. Comme décrit dans la documentation, cette stratégie n'est pas adapté pour le protocol HTTP car elle est faite de connexion courte. C'est pour cela qu'on peut apercevoir une différence entre deux tests de charge.
 
@@ -375,6 +381,8 @@ On s'aperçoit que s2 répond plus souvent que s1. On peut donc en déduire que 
 #### 1.3 Résultats Jmeters
 
 ##### 		**first**:
+
+Dans ce test, les cookies sont activés, le délai est quatre fois supérieur sur le `s1` que sur le `s2` et 500 requêtes au total. Nous pouvons remarqué que le serveur `s2` va receptionner la majorité des requêtes. Une autre manière d'interépreter ces résultats et que 15 utilisateurs (150 requêtes / 10 requêtes) ont fait des requêtes lorsque le serveur `s2` avait 5 connexions déjà actives.
 
 ![image-20191130141708294](/home/ljebool/.config/Typora/typora-user-images/image-20191130141708294.png)
 
@@ -409,6 +417,8 @@ Cette stratégie de test est beaucoup plus adaptée à cette stratégie de load 
 #### 1.3 Résultats Jmeters
 
 ##### 		**first**:
+
+Ce test est identique au précédent sauf qu'il n'y a pas de cookies. Et dans ce cas là, nous pouvons remarquer que le serveur `s2` receptionne encore plus de requêtes. Une autre manière d'interpreter ce résultat et que 105 requêtes sont arrivées lorsque le serveur `s2` avait 5 connexions déjà actives.
 
 ![image-20191130141910656](/home/ljebool/.config/Typora/typora-user-images/image-20191130141910656.png)
 
