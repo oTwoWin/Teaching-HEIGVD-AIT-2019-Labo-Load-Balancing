@@ -2,7 +2,7 @@
 
 *1. There is different way to implement the sticky session. One possibility  is to use the SERVERID provided by HAProxy. Another way is to use the  NODESESSID provided by the application. Briefly explain the difference  between both approaches (provide a sequence diagram with cookies to show the difference).*
 
-![](/home/daniel/.config/Typora/typora-user-images/image-20191113162708047.png)
+![](./images/image-20191113162708047.png)
 
 ![image-20191120160002948](/home/daniel/Documents/AIT/Teaching-HEIGVD-AIT-2019-Labo-Load-Balancing/Documentation/images/image-20191120160002948.png)
 
@@ -61,4 +61,4 @@ Les résultats du test JMeter confortent l'idée que le load balancer fonctionne
 
 Lors de la requête du premier thread, le load balancer va lui attribuer un serveur (s1 par exemple) et le deuxième thread va se voir attribuer l'autre serveur à cause du mode Round Robin (s2 dans l'exemple). Chaque thread va alors faire 1000 requêtes sur chaque serveur.
 
-![image-20191120161621497](/home/daniel/.config/Typora/typora-user-images/image-20191120161621497.png)
+![image-20191120161621497](./images/image-20191120161621497.png)
