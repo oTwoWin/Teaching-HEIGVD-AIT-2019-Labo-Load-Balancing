@@ -49,9 +49,9 @@ La performance est grandement impacté car le load balancer va tenter d'atteindr
 
 *1. There is different way to implement the sticky session. One possibility  is to use the SERVERID provided by HAProxy. Another way is to use the  NODESESSID provided by the application. Briefly explain the difference  between both approaches (provide a sequence diagram with cookies to show the difference).*
 
-![](/home/daniel/.config/Typora/typora-user-images/image-20191113162708047.png)
+![](./images/image-20191113162708047.png)
 
-![image-20191120160002948](/home/ljebool/SynologyDrive/Etudes/HEIG-VD/2019/AIT/labos/labo3/Documentation/images/image-20191120160002948.png)
+![image-20191120160002948](./images/image-20191120160002948.png)
 
 
 
@@ -108,9 +108,49 @@ Les résultats du test JMeter confortent l'idée que le load balancer fonctionne
 
 Lors de la requête du premier thread, le load balancer va lui attribuer un serveur (s1 par exemple) et le deuxième thread va se voir attribuer l'autre serveur à cause du mode Round Robin (s2 dans l'exemple). Chaque thread va alors faire 1000 requêtes sur chaque serveur.
 
-![image-20191120161621497](/home/daniel/.config/Typora/typora-user-images/image-20191120161621497.png)
+![image-20191120161621497](./images/image-20191120161621497.png)
 
 
+
+# TASK 3
+
+1. Take a screenshot of the Step 5 and tell us which node is answering.
+
+   [![image-20191125125411109](https://github.com/oTwoWin/Teaching-HEIGVD-AIT-2019-Labo-Load-Balancing/raw/master/Documentation/images/dwq.jpeg)](https://github.com/oTwoWin/Teaching-HEIGVD-AIT-2019-Labo-Load-Balancing/blob/master/Documentation/images/dwq.jpeg)
+
+   On peut s'apercevoir que le node s1 est celui qui répond.
+
+2. Based on your previous answer, set the node in DRAIN mode. Take a screenshot of the HAProxy state page.
+
+   [![image-20191125130018656](https://github.com/oTwoWin/Teaching-HEIGVD-AIT-2019-Labo-Load-Balancing/raw/master/Documentation/images/image-20191125130018656.png)](https://github.com/oTwoWin/Teaching-HEIGVD-AIT-2019-Labo-Load-Balancing/blob/master/Documentation/images/image-20191125130018656.png)
+
+   Le node s1 est passé en bleu maintenant.
+
+3. Refresh your browser and explain what is happening. Tell us if you stay on the same node or not. If yes, why? If no, why?
+
+   Lors du rafraîchissement de la page, on reste toujours sur le même serveur. En effet, tout le trafic qui est déjà dirigé sur le serveur va le rester. Le reste de celui-ci devrait aller sur l'autre serveur.
+
+4. Open another browser and open `http://192.168.42.42`. What is happening?
+
+   La requête est redirigé sur le node s2. C'est le comportement normal du Round robin.
+
+5. Clear the cookies on the new browser and repeat these two steps multiple times. What is happening? Are you reaching the node in DRAIN mode?
+
+   Le serveur s1 n'est jamais atteint en mode DRAIN. En effet, à chaque nouvelle session, le serveur va nous rediriger sur le serveur s2.
+
+6. Reset the node in READY mode. Repeat the three previous steps and explain what is happening. Provide a screenshot of HAProxy's stats page.
+
+   Le navigateur maintient toujours la connection sur le node s1. Ensuite à l'ouverture d'un nouvelle session, le load balancer va se comporter normalement. Il va switcher entre s1 et s2 à chaque nouvelle session.
+
+   [![image-20191125133714561](https://github.com/oTwoWin/Teaching-HEIGVD-AIT-2019-Labo-Load-Balancing/raw/master/Documentation/images/image-20191125133714561.png)](https://github.com/oTwoWin/Teaching-HEIGVD-AIT-2019-Labo-Load-Balancing/blob/master/Documentation/images/image-20191125133714561.png)
+
+7. Finally, set the node in MAINT mode. Redo the three same steps and explain what is happening. Provide a screenshot of HAProxy's stats page.
+
+   Toutes les connexions sont directement redirigées sur le serveur s2, même les sessions déjà active sur s1. Le serveur s1 n'est plus jamais atteint tant qu'il est en mode MAINT.
+
+   [![image-20191125134126274](https://github.com/oTwoWin/Teaching-HEIGVD-AIT-2019-Labo-Load-Balancing/raw/master/Documentation/images/image-20191125134126274.png)](https://github.com/oTwoWin/Teaching-HEIGVD-AIT-2019-Labo-Load-Balancing/blob/master/Documentation/images/image-20191125134126274.png)
+
+​	
 
 # Task 4
 
@@ -222,11 +262,11 @@ Lors de la requête du premier thread, le load balancer va lui attribuer un serv
 
 Pour cette partie du laboratoire, il nous est demandé de découvrir `HAProxy` et de prendre deux stratégies différentes afin de les analyser grâce à l'outil `JMeter`. Après avoir lu les différentes stratégies, nous avons choisi les stratégies **first** et **leastconn**. Nous traiterons différents cas que nous analyserons et dont on tirera une conclusions.
 
-La stratégie **first** consiste 
-
 ### 1. Configurations de HAProxy
 
 #### 1.1 Stratégie *first*
+
+La stratégie **first** consiste à redirigé la requête entrante sur le premier serveur ayant des connexions disponibles. Si deux serveurs ont le même nombre de connexion disponible, le proxy choisira l'id du serveur le plus faible. Le nombre maximum de connexion par serveur est défini dans le fichier de configuration `haproxycfg`.
 
 Afin de configurer *HAProxy* avec la stratégie *first*, nous avons dû la spécifier dans le fichier de configuration *haproxy.cfg* mais nous avons dû également spécifier le nombre de connexions maximum simultanées sur chaque serveur. Nous avons décidé de mettre ce nombre à 5.
 
@@ -236,11 +276,15 @@ Ci-dessous, une partie du fichier haproxy.cfg contenant les modifiations
 
 #### 1.2 Stratégie *leastconn*
 
+La stratégie **leastconn** a plutôt une idéologie inverse de **first**. La requête va être redirigée sur le serveur ayant le moins de connexions en cours. Si plusieurs serveurs ont le même nombre de connexions en cours, l'algorithme Round-Robin est utilisé. Il est idéal pour de longues connexions.  
+
 Afin de configurer *HAProxy* avec la stratégie *fleastconn*, nous avons dû la spécifier dans le fichier de configuration *haproxy.cfg* 
 
 Ci-dessous, une partie du fichier haproxy.cfg contenant les modifications:
 
 ![image-20191130135649597](/home/ljebool/.config/Typora/typora-user-images/image-20191130135649597.png)
+
+
 
 ### 2. 1er test 
 
@@ -262,17 +306,19 @@ Ci-dessous, une partie du fichier haproxy.cfg contenant les modifications:
 
 #### 1.3 Résultats Jmeters
 
-##### 		**first**:
+##### 		**first**:		
 
-​		![image-20191130141200848](/home/ljebool/.config/Typora/typora-user-images/image-20191130141200848.png)
+Nous pouvons remarquer qu'avec la stratégie **first** et les cookies activés , la distribution se fait uniformement sur les deux serveurs. La distrbutions se fera ainsi : 
 
-​		**leastconn**:
+- Le serveur `s1` se verra attribués jusqu'à ce qu'il ait 5 connexions actives. Lorsque la 6ème requête arrive, le proxy redirigera la 
+
+##### 		![image-20191130141200848](/home/ljebool/.config/Typora/typora-user-images/image-20191130141200848.png)
+
+**leastconn**:
 
 ![image-20191130141010888](/home/ljebool/.config/Typora/typora-user-images/image-20191130141010888.png)
 
-
-
-### 2. 2ème cas 
+### 2. 2ème test 
 
 #### 1.1 Configurations des serveurs
 
@@ -302,7 +348,7 @@ Ci-dessous, une partie du fichier haproxy.cfg contenant les modifications:
 
 
 
-### 3. 3ème cas 
+### 3. 3ème test 
 
 #### 1.1 Configurations des serveurs
 
@@ -328,13 +374,13 @@ Ci-dessous, une partie du fichier haproxy.cfg contenant les modifications:
 
 ![image-20191130141708294](/home/ljebool/.config/Typora/typora-user-images/image-20191130141708294.png)
 
-​		**leastconn**:
+**leastconn**:
 
 ![image-20191130141938887](/home/ljebool/.config/Typora/typora-user-images/image-20191130141938887.png)
 
 
 
-### 4. 4ème cas 
+### 4. 4ème test 
 
 #### 1.1 Configurations des serveurs
 

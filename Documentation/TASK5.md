@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Task 5
 
 Pour cette partie du laboratoire, il nous est demandé de découvrir `HAProxy` et de prendre deux stratégies différentes afin de les analyser grâce à l'outil `JMeter`. Après avoir lu les différentes stratégies, nous avons choisi les stratégies **first** et **leastconn**. Nous traiterons différents cas que nous analyserons et dont on tirera une conclusions.
@@ -143,4 +144,7 @@ Ci-dessous, une partie du fichier haproxy.cfg contenant les modifications:
 ![image-20191130141949337](/home/ljebool/.config/Typora/typora-user-images/image-20191130141949337.png)
 
 
+=======
+# Task 5: Balancing strategies
+>>>>>>> 8ef4d9933f6ed1707a3f103fc7a15d237d80cba1
 
