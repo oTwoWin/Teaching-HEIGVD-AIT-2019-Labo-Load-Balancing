@@ -18,7 +18,7 @@ Actuellement, nous avons un cookie "NODESESSID" qui correspond à un numéro de 
 
 *<u>2. Explain what should be the correct behavior of the load balancer for session management.*</u>
 
-Le comportement correct d'un load balancer concernant la gestion de session est de renvoyé un client toujours sur le même serveur. En effet, ainsi la session est maintenue. 
+Le comportement correct d'un load balancer concernant la gestion de session est de renvoyer un client toujours sur le même serveur. En effet, ainsi la session est maintenue. 
 Prenons un exemple concret:
 Si un utilisateur se connecte sur un site de e-commerce et rajoute un article dans le panier, et que en rajoutant un deuxième article, il est redirigé vers un autre serveur, le premier article sera perdu.
 En redirigeant le serveur sur le même serveur, ce problème ne surviendrait pas et le panier serait toujours le même.
@@ -43,7 +43,7 @@ $ docker stop s1
 
 *Clear the results in JMeter and re-run the test plan. Explain what is happening when only one node remains active. Provide another sequence diagram using the same model as the previous one.*
 
-La performance est grandement impacté car le load balancer va tenter d'atteindre le serveur éteint. 
+La performance est grandement impactée car le load balancer va tenter d'atteindre le serveur éteint. 
 
 ![image-20191113154805779](/home/ljebool/SynologyDrive/Etudes/HEIG-VD/2019/AIT/labos/labo3/Documentation/images/image-20191113154805779.png)
 
@@ -63,7 +63,7 @@ Comme le montre les deux diagrammes ci-dessus, le protocole est assez similaire.
 
 
 
-Lors de l'utilisation de NODESESSID par l'application, le load balancer va se comporter de la même manière lors de la première requête. Il va envoyer la requête à un des serveurs disponible et attendre la retour de la requête pour mettre l'identifiant du serveur. Néanmoins, le cookie va être set par l'application et le load balancer va ajouter à la fin du cookie un point plus l'identifiant du serveur. Lors d'une requête de l'utilisateur, le load balancer va récupérer le cookie, enlever sa partie et forwarder la requête au serveur correspondant.
+Lors de l'utilisation de NODESESSID par l'application, le load balancer va se comporter de la même manière lors de la première requête. Il va envoyer la requête à un des serveurs disponible et attendre la retour de la requête pour mettre l'identifiant du serveur. Néanmoins, le cookie va être set par l'application et le load balancer va ajouter au début du cookie l'identifiant du serveur. Lors d'une requête de l'utilisateur, le load balancer va récupérer le cookie, enlever sa partie et forwarder la requête au serveur correspondant.
 
 2. *Provide the modified `haproxy.cfg` file with a short explanation of the modifications you did to enable sticky session management.*
 
@@ -78,7 +78,7 @@ backend nodes
 
 La ligne `server [servername] [serverIP]:[serverPort] cookie [servername] check` permet de définir la valeur du cookie pour le serveur spécifié.
 
-La ligne `cookie SERVERID insert indirect` permet de spécifié à HAProxy de rajouter un cookie SERVERID aux réponse des serveur ce qui lui permettra de rediriger les prochaines requêtes sur le bon serveur
+La ligne `cookie SERVERID insert indirect` permet de spécifié à HAProxy de rajouter un cookie SERVERID aux réponses des serveur ce qui lui permettra de rediriger les prochaines requêtes sur le bon serveur.
 
 3. *Explain what is the behavior when you open and refresh the URL http://192.168.42.42 in your browser. Add screenshots to complement your explanations. We expect that you take a deeper a look at session management.*
 
@@ -122,13 +122,13 @@ Lors de la requête du premier thread, le load balancer va lui attribuer un serv
 
    [![image-20191125125411109](https://github.com/oTwoWin/Teaching-HEIGVD-AIT-2019-Labo-Load-Balancing/raw/master/Documentation/images/dwq.jpeg)](https://github.com/oTwoWin/Teaching-HEIGVD-AIT-2019-Labo-Load-Balancing/blob/master/Documentation/images/dwq.jpeg)
 
-   On peut s'apercevoir que le node s1 est celui qui répond.
+   On peut s'apercevoir que le node s1 est celui qui répond. En effet, on peut s'apercevoir que le serveur s2 n'a aucune session active et n'a eu aucune session. 
 
 2. Based on your previous answer, set the node in DRAIN mode. Take a screenshot of the HAProxy state page.
 
    [![image-20191125130018656](https://github.com/oTwoWin/Teaching-HEIGVD-AIT-2019-Labo-Load-Balancing/raw/master/Documentation/images/image-20191125130018656.png)](https://github.com/oTwoWin/Teaching-HEIGVD-AIT-2019-Labo-Load-Balancing/blob/master/Documentation/images/image-20191125130018656.png)
 
-   Le node s1 est passé en bleu maintenant.
+   Le node s1 est passé en bleu maintenant. Cela correspond à l'étiquette `active or backup SOFT STOPPED for maintenance`.  Le serveur va continuer à servir les sessions qui sont actives sur le serveur mais le load balancer va rediriger toutes les requêtes sur le serveur s2. 
 
 3. Refresh your browser and explain what is happening. Tell us if you stay on the same node or not. If yes, why? If no, why?
 
@@ -192,7 +192,7 @@ Lors de la requête du premier thread, le load balancer va lui attribuer un serv
 
    Nous avons relancé les tests et voici les résultats : ![](/home/ljebool/SynologyDrive/Etudes/HEIG-VD/2019/AIT/labos/labo3/Documentation/images/t4_q2_2.png)
 
-   Nous pouvons remarquer que toutes les requêtes ont bien été effectuées  mais que le délai a un impact majeur sur le serveur `s1`. En effet, dans les résultats précédents (question 1), nous pouvons remarquer que le serveur `s1` a un débit de 127.3/sec mais dans les résultats listés ci-dessus, le débit est descendu à 3.3/sec. Cette baisse est dûe au délai augmenté.
+   Nous pouvons remarquer que toutes les requêtes ont bien été effectuées mais que le délai a un impact majeur sur le serveur `s1`. En effet, dans les résultats précédents (question 1), nous pouvons remarquer que le serveur `s1` a un débit de 127.3/sec mais dans les résultats listés ci-dessus, le débit est descendu à 3.3/sec. Cette baisse est dûe au délai augmenté.
 
    
 
@@ -208,7 +208,7 @@ Lors de la requête du premier thread, le load balancer va lui attribuer un serv
 
    Nous avons relancé les tests et voici les résultats : ![](/home/ljebool/SynologyDrive/Etudes/HEIG-VD/2019/AIT/labos/labo3/Documentation/images/t4_q3_2.png)
 
-   Nous pouvons remarquer que le délai de 2500 millisecondes à un impact majeur sur le serveur `s1`. En effet, ce dernier ne recevera quasiment plus aucune requête et toutes les requêtes seront redirigées sur le serveur `s2`. Nous nous sommes demandés pourquoi toutes les requêtes étaient redirigées sur le serveur `s2` alors nous nous sommes connectés à l'interface administrative du proxy, situé à l'adresse `http://192.168.42.42:1936/` et nous avons remarqué que le serveur `s1` est considéré par le proxy comme `down` : 
+   Nous pouvons remarquer que le délai de 2500 millisecondes à un impact majeur sur le serveur `s1`. En effet, ce dernier ne recevera quasiment plus aucune requête et toutes les requêtes seront redirigées sur le serveur `s2`. Nous nous sommes demandés pourquoi toutes les requêtes étaient redirigées sur le serveur `s2` alors nous nous sommes connectés à l'interface administrative du proxy, située à l'adresse `http://192.168.42.42:1936/` et nous avons remarqué que le serveur `s1` est considéré par le proxy comme `down` : 
 
    ![](/home/ljebool/SynologyDrive/Etudes/HEIG-VD/2019/AIT/labos/labo3/Documentation/images/t4_q3_3.png)
 
