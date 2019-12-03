@@ -2,19 +2,11 @@
 
 *1 . Explain how the load balancer behaves when you open and refresh the URL <http://192.168.42.42> in your browser. Add screenshots to complement your explanations. We expect that you take a deeper a look at session management.*
 
-La première requête nous envoie sur le serveur s2 et si nous rafraîchissons la page, nous arrivons sur le serveur s1. Après plusieurs rafraîchissements de la page web, nous pouvons remarquer que nous changeons de serveur.
-
-
-
- 
+La première requête nous envoie sur le serveur s2 et si nous rafraîchissons la page, nous arrivons sur le serveur s1. Après plusieurs rafraîchissements de la page web, nous pouvons remarquer que nous changeons de serveur. 
 
 ![](./images/image-20191113153215238.png)
 
-
-
-![image-20191113153339497](./images/TASK2.md)
-
-
+![image-20191120150902155](./images/image-20191120150902155.png)
 
 Actuellement, nous avons un cookie "NODESESSID" qui correspond à un numéro de session. Nous pouvons nous apercevoir qu'il envoie à chaque requête son numéro de session mais que le serveur redéfini son id de session. Du coup, la session n'est pas préservé entre chaque requête.
 
@@ -30,8 +22,6 @@ En redirigeant le serveur sur le même serveur, ce problème ne surviendrait pas
 
 
 *3. Provide a sequence diagram to explain what is happening when one requests the URL for the first time and then refreshes the page. We want to see what is happening with the cookie. We want to see the sequence of messages exchanged (1) between the browser and HAProxy and (2) between HAProxy and the nodes S1 and S2.*![image-20191113163525757](./images/image-20191113163525757.png)
-
-![img](blob:https://web.telegram.org/c153ac86-fa4d-424c-ae10-cad9f4742d80)
 
 *4. Provide a screenshot of the summary report from JMeter.*
 
